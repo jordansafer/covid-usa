@@ -4,12 +4,17 @@
   "description": "js module for getting latest data from the NYT usa covid19 dataset",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "mocha",
+    "install": "napa CSSEGISandData/COVID-19 && napa nytimes/covid-19-data"
   },
   "keywords": [
     "covid"
   ],
   "author": "Jordan Safer",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "dependencies": {
+    "mocha": "^7.1.1",
+    "napa": "^3.0.0"
+  }
 }
