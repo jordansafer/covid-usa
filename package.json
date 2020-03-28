@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "install": "napa CSSEGISandData/COVID-19 && napa nytimes/covid-19-data"
+    "install": "napa && cp node_modules/covid-19-data/*.csv resources/"
   },
   "keywords": [
     "covid"
@@ -14,7 +14,15 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
+    "csv-parse": "^4.8.8",
     "mocha": "^7.1.1",
     "napa": "^3.0.0"
+  },
+  "napa": {
+    "COVID-19": "CSSEGISandData/COVID-19",
+    "covid-19-data": "nytimes/covid-19-data"
+  },
+  "napa-config": {
+    "cache": "false"
   }
 }
