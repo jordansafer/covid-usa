@@ -9,4 +9,8 @@ globals:
   SharedArrayBuffer: readonly
 parserOptions:
   ecmaVersion: 2018
-rules: {}
+rules:
+  quotes: ["error", "double"]
+  indent: ["error", 4]
+  no-shadow: error
+  camelcase: ["error", {"properties": "never"}]
