@@ -1,5 +1,6 @@
-# covid-usa A simple way to view and program with the latest US Covid data
-### Courtesy of the NYT for collecting the data
+# covid-usa 
+## Import the latest US Covid data in JS
+### See NYT for data: https://github.com/nytimes/covid-19-data
 
 
 ## Usage:
