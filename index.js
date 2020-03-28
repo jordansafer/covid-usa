@@ -2,11 +2,13 @@ const fs = require("fs")
 const parse = require("csv-parse/lib/sync")
 const _ = require("lodash")
 
+const resourceDir = `${__dirname}/resources`
+
 // date,state,fips,cases,deaths
-const stateCsv = fs.readFileSync("resources/us-states.csv", "utf8")
+const stateCsv = fs.readFileSync(`${resourceDir}/us-states.csv`, "utf8")
 
 // date,county,state,fips,cases,deaths
-const countyCsv = fs.readFileSync("resources/us-counties.csv", "utf8")
+const countyCsv = fs.readFileSync(`${resourceDir}/us-counties.csv`, "utf8")
 
 // parse state data
 const stateData = parse(stateCsv)
