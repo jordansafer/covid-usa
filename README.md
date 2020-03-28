@@ -5,10 +5,13 @@
 
 ## Usage:
 ### Add to package.json
+`npm install covid-usa`
+
+or
 
 ```
 "dependencies": {
-    "covid-usa": "jordansafer/covid-usa"
+    "covid-usa": "1.0.0"
 }
 ```
 ### Access the data
