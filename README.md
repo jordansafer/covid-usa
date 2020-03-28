@@ -11,7 +11,7 @@ or
 
 ```
 "dependencies": {
-    "covid-usa": "1.0.0"
+    "covid-usa": "1.0.1"
 }
 ```
 ### Access the data
