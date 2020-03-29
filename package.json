@@ -8,13 +8,21 @@
     "install": "napa && cp node_modules/covid-19-data/*.csv resources/"
   },
   "keywords": [
-    "covid19", "COVID-19", "coronavirus", "new york times", "NYT", "county-level", "state-level", "coronavirus cases"
+    "covid19",
+    "COVID-19",
+    "coronavirus",
+    "new york times",
+    "NYT",
+    "county-level",
+    "state-level",
+    "coronavirus cases"
   ],
   "author": "Jordan Safer",
   "license": "MIT",
   "private": false,
   "dependencies": {
     "csv-parse": "^4.8.8",
+    "download-git-repo": "^3.0.2",
     "lodash": "^4.17.15",
     "mocha": "^7.1.1",
     "napa": "^3.0.0"

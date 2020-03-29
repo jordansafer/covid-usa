@@ -1,5 +1,6 @@
 const fs = require("fs")
 const parse = require("csv-parse/lib/sync")
+// const download = require("download-git-repo")
 const _ = require("lodash")
 
 const resourceDir = `${__dirname}/resources`
@@ -10,58 +11,85 @@ const stateCsv = fs.readFileSync(`${resourceDir}/us-states.csv`, "utf8")
 // date,county,state,fips,cases,deaths
 const countyCsv = fs.readFileSync(`${resourceDir}/us-counties.csv`, "utf8")
 
-// parse state data
-const stateData = parse(stateCsv)
-stateData.shift()
+function getStateData (csv) {
+    const stateData = parse(csv)
+    stateData.shift()
 
-const stateInfoByDate = {}
+    const stateInfoByDate = {}
 
-_.forEach(stateData, row => {
-    const date = row[0]
-    const state = row[1]
-    const stateInfo = {
-        cases: row[3],
-        deaths: row[4]
-    }
+    _.forEach(stateData, row => {
+        const date = row[0]
+        const state = row[1]
+        const stateInfo = {
+            fips: row[2],
+            cases: row[3],
+            deaths: row[4]
+        }
 
-    const stateEntries = stateInfoByDate[date] || {}
-    stateEntries[state] = stateInfo
-    stateInfoByDate[date] = stateEntries
-})
+        const stateEntries = stateInfoByDate[date] || {}
+        stateEntries[state] = stateInfo
+        stateInfoByDate[date] = stateEntries
+    })
+}
 
-// parse county data
-const countyData = parse(countyCsv)
-countyData.shift()
+function addCountyData (csv, stateInfoByDate) {
+    const countyData = parse(csv)
+    countyData.shift()
 
-const countyInfoByDate = {}
+    _.forEach(countyData, row => {
+        const date = row[0]
+        const county = row[1]
+        const state = row[2]
+        const countyInfo = {
+            fips: row[3],
+            cases: row[4],
+            deaths: row[5],
+            state: state
+        }
 
-_.forEach(countyData, row => {
-    const date = row[0]
-    const county = row[1]
-    const state = row[2]
-    const countyInfo = {
-        cases: row[4],
-        deaths: row[5],
-        state: state
-    }
+        // Update state map with county field
+        const stateEntries = stateInfoByDate[date] || {}
+        const stateInfo = stateEntries[state] || {}
+        stateInfo[county] = countyInfo
+        stateEntries[state] = stateInfo
+        stateInfoByDate[date] = stateEntries
+    })
+}
 
-    // Update state map with county field
-    const stateEntries = stateInfoByDate[date] || {}
-    const stateInfo = stateEntries[state] || {}
-    stateInfo[county] = countyInfo
-    stateEntries[state] = stateInfo
-    stateInfoByDate[date] = stateEntries
+function getCountyData (csv) {
+    const countyData = parse(csv)
+    countyData.shift()
 
-    // update county map
-    const countyEntries = countyInfoByDate[date] || {}
-    countyEntries[state] = countyInfo
-    countyInfoByDate[date] = countyEntries
-})
+    const countyInfoByDate = {}
+
+    _.forEach(countyData, row => {
+        const date = row[0]
+        const county = row[1]
+        const state = row[2]
+        const countyInfo = {
+            fips: row[3],
+            cases: row[4],
+            deaths: row[5],
+            state: state
+        }
+
+        // update county map
+        const countyEntries = countyInfoByDate[date] || {}
+        countyEntries[county] = countyInfo
+        countyInfoByDate[date] = countyEntries
+    })
+}
 
 module.exports = {
     // Dictionary with all state date
-    state: stateInfoByDate,
+    stateData: function () {
+        const stateData = getStateData(stateCsv)
+        addCountyData(countyCsv, stateData)
+        return stateData
+    },
 
     // Dictionary with all county data
-    county: countyInfoByDate
+    countyData: function () {
+        return getCountyData(countyCsv)
+    }
 }
