@@ -1,8 +1,12 @@
 {
   "name": "covid-usa",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Latest data from the New York Times COVID-19 dataset",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jordansafer/covid-usa.git"
+  },
   "scripts": {
     "test": "eslint index.js && mocha",
     "install": "napa && cp node_modules/covid-19-data/*.csv resources/"
@@ -24,7 +28,6 @@
     "csv-parse": "^4.8.8",
     "download-git-repo": "^3.0.2",
     "lodash": "^4.17.15",
-    "mocha": "^7.1.1",
     "napa": "^3.0.0"
   },
   "napa": {
@@ -40,6 +43,7 @@
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1"
+    "eslint-plugin-standard": "^4.0.1",
+    "mocha": "^7.1.1"
   }
 }
