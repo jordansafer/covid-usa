@@ -1,3 +1,4 @@
+![Node.js CI](https://github.com/jordansafer/covid-usa/workflows/Node.js%20CI/badge.svg)
 # covid-usa 
 ## Import the latest US Covid data in JS
 ### See NYT for data: https://github.com/nytimes/covid-19-data
