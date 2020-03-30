@@ -1,18 +1,25 @@
-var assert = require('assert')
+var assert = require("assert")
 
-var lib = require('../index.js')
+describe("lib", function () {
+    var lib = require("../index.js")
+    const date = "2020-03-14"
+    const state = "Massachusetts"
+    const county = "Middlesex"
+    describe("#stateData()", function () {
+        const stateDict = lib.stateData()
+        it("should have state cases", function () {
+            assert(stateDict[date][state].cases > 0)
+        })
 
-let state_dict = lib.state
+        it("should have county cases", function () {
+            assert(stateDict[date][state][county].cases > 0)
+        })
+    })
 
-let date = "2020-03-14"
-let state = "Massachusetts"
-
-console.log(state_dict[date][state])
-
-let county_dict = lib.county
-
-let county = "Middlesex"
-console.log(state_dict[date][state][county])
-console.log(county_dict[date][county])
-
-// assert.equals(a,b)
+    describe("#countyData()", function () {
+        const countyDict = lib.countyData()
+        it("should have county cases", function () {
+            assert(countyDict[date][county].cases > 0)
+        })
+    })
+})

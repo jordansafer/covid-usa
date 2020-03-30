@@ -1,39 +1,35 @@
 const fs = require("fs")
 const parse = require("csv-parse/lib/sync")
-// const download = require("download-git-repo")
+const download = require("download-git-repo")
 const _ = require("lodash")
 
 const resourceDir = `${__dirname}/resources`
 
-// date,state,fips,cases,deaths
-const stateCsv = fs.readFileSync(`${resourceDir}/us-states.csv`, "utf8")
+function getStateData () {
+    // date,state,fips,cases,deaths
+    const stateCsv = fs.readFileSync(`${resourceDir}/us-states.csv`, "utf8")
 
-// date,county,state,fips,cases,deaths
-const countyCsv = fs.readFileSync(`${resourceDir}/us-counties.csv`, "utf8")
-
-function getStateData (csv) {
-    const stateData = parse(csv)
+    const stateData = parse(stateCsv)
     stateData.shift()
 
-    const stateInfoByDate = {}
-
-    _.forEach(stateData, row => {
-        const date = row[0]
-        const state = row[1]
-        const stateInfo = {
-            fips: row[2],
-            cases: row[3],
-            deaths: row[4]
-        }
-
-        const stateEntries = stateInfoByDate[date] || {}
-        stateEntries[state] = stateInfo
-        stateInfoByDate[date] = stateEntries
+    const byDate = _.groupBy(stateData, row => row[0])
+    const stateInfoByDate = _.mapValues(byDate, dayData => {
+        const byState = _.keyBy(dayData, row => row[1])
+        const stateInfo = _.mapValues(byState, row => {
+            return {
+                fips: row[2],
+                cases: row[3],
+                deaths: row[4]
+            }
+        })
+        return stateInfo
     })
+    return stateInfoByDate
 }
 
-function addCountyData (csv, stateInfoByDate) {
-    const countyData = parse(csv)
+function addCountyData (stateInfoByDate) {
+    const countyCsv = fs.readFileSync(`${resourceDir}/us-counties.csv`, "utf8")
+    const countyData = parse(countyCsv)
     countyData.shift()
 
     _.forEach(countyData, row => {
@@ -57,39 +53,57 @@ function addCountyData (csv, stateInfoByDate) {
 }
 
 function getCountyData (csv) {
-    const countyData = parse(csv)
+    const countyCsv = fs.readFileSync(`${resourceDir}/us-counties.csv`, "utf8")
+    const countyData = parse(countyCsv)
+    // remove headers: date,county,state,fips,cases,deaths
     countyData.shift()
 
-    const countyInfoByDate = {}
-
-    _.forEach(countyData, row => {
-        const date = row[0]
-        const county = row[1]
-        const state = row[2]
-        const countyInfo = {
-            fips: row[3],
-            cases: row[4],
-            deaths: row[5],
-            state: state
-        }
-
-        // update county map
-        const countyEntries = countyInfoByDate[date] || {}
-        countyEntries[county] = countyInfo
-        countyInfoByDate[date] = countyEntries
+    const byDate = _.groupBy(countyData, row => row[0])
+    const countyInfoByDate = _.mapValues(byDate, dayData => {
+        const byCounty = _.keyBy(dayData, row => row[1])
+        const countyInfo = _.mapValues(byCounty, row => {
+            return {
+                state: row[2],
+                fips: row[3],
+                cases: row[4],
+                deaths: row[5]
+            }
+        })
+        return countyInfo
     })
+    return countyInfoByDate
+}
+
+function errorFn (err) {
+    if (err) console.log(err)
+}
+
+function stateDataCached () {
+    const stateData = getStateData()
+    addCountyData(stateData)
+    return stateData
+}
+
+function countyDataCached () {
+    return getCountyData()
 }
 
 module.exports = {
     // Dictionary with all state date
-    stateData: function () {
-        const stateData = getStateData(stateCsv)
-        addCountyData(countyCsv, stateData)
-        return stateData
-    },
+    stateDataCached: stateDataCached,
 
     // Dictionary with all county data
+    countyDataCached: countyDataCached,
+
+    // Get latest state date
+    stateData: function () {
+        download("nytimes/covid-19-data", resourceDir, errorFn)
+        return stateDataCached()
+    },
+
+    // Get latest county data
     countyData: function () {
-        return getCountyData(countyCsv)
+        download("nytimes/covid-19-data", resourceDir, errorFn)
+        return countyDataCached()
     }
 }
