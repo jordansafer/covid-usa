@@ -14,7 +14,7 @@ or
 
 ```
 "dependencies": {
-    "covid-usa": "1.2.2"
+    "covid-usa": "1.2.3"
 }
 ```
 ### Access the data
@@ -27,6 +27,12 @@ console.log(stateData["2020-03-20"]["California"].cases);
 console.log(stateData["2020-03-20"]["California"].deaths);
 console.log(stateData["2020-03-20"]["California"].fid);
 console.log(stateData["2020-03-20"]["Massachusetts"]["Middlesex"].cases);
+
+// list of all states in dataset
+var states = covidData.allStates()
+
+// list of all counties in a state in the dataset
+var counties = covidData.allCounties("California")
 
 // county level data by date
 var countyData = covidData.countyData();

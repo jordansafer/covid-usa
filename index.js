@@ -52,7 +52,7 @@ function addCountyData (stateInfoByDate) {
     })
 }
 
-function getCountyData (csv) {
+function getCountyData () {
     const countyCsv = fs.readFileSync(`${resourceDir}/us-counties.csv`, "utf8")
     const countyData = parse(countyCsv)
     // remove headers: date,county,state,fips,cases,deaths
@@ -72,6 +72,28 @@ function getCountyData (csv) {
         return countyInfo
     })
     return countyInfoByDate
+}
+
+function allStates () {
+    // date,state,fips,cases,deaths
+    const stateCsv = fs.readFileSync(`${resourceDir}/us-states.csv`, "utf8")
+    const stateData = parse(stateCsv)
+    stateData.shift()
+
+    const byState = _.groupBy(stateData, row => row[1])
+    return Object.keys(byState)
+}
+
+function allCounties (state) {
+    const countyCsv = fs.readFileSync(`${resourceDir}/us-counties.csv`, "utf8")
+    const countyData = parse(countyCsv)
+    // remove headers: date,county,state,fips,cases,deaths
+    countyData.shift()
+
+    const byState = _.groupBy(countyData, row => row[2])
+    const stateData = byState[state]
+    const byCounty = _.groupBy(stateData, row => row[1])
+    return Object.keys(byCounty)
 }
 
 function errorFn (err) {
@@ -105,5 +127,16 @@ module.exports = {
     countyData: function () {
         download("nytimes/covid-19-data", resourceDir, errorFn)
         return countyDataCached()
+    },
+
+    // list of state in dataset
+    allStates: function () {
+        download("nytimes/covid-19-data", resourceDir, errorFn)
+        return allStates()
+    },
+
+    allCounties: function (state) {
+        download("nytimes/covid-19-data", resourceDir, errorFn)
+        return allCounties(state)
     }
 }
