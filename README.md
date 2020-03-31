@@ -1,4 +1,6 @@
 ![Node.js CI](https://github.com/jordansafer/covid-usa/workflows/Node.js%20CI/badge.svg)
+[![NPM version](http://img.shields.io/npm/v/covid-usa.svg)](https://www.npmjs.com/package/covid-usa)
+[![NPM Downloads](https://img.shields.io/npm/dt/covid-usa.svg)](https://www.npmjs.com/covid-usa)
 # covid-usa 
 ## Import the latest US Covid data in JS
 ### See NYT for data: https://github.com/nytimes/covid-19-data
