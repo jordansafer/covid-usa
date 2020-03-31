@@ -4,10 +4,12 @@ const download = require("download-git-repo")
 const _ = require("lodash")
 
 const resourceDir = `${__dirname}/resources`
+const stateFilePath = `${resourceDir}/us-states.csv`
+const countyFilePath = `${resourceDir}/us-counties.csv`
 
 function getStateData () {
     // date,state,fips,cases,deaths
-    const stateCsv = fs.readFileSync(`${resourceDir}/us-states.csv`, "utf8")
+    const stateCsv = fs.readFileSync(stateFilePath, "utf8")
 
     const stateData = parse(stateCsv)
     stateData.shift()
@@ -28,7 +30,7 @@ function getStateData () {
 }
 
 function addCountyData (stateInfoByDate) {
-    const countyCsv = fs.readFileSync(`${resourceDir}/us-counties.csv`, "utf8")
+    const countyCsv = fs.readFileSync(countyFilePath, "utf8")
     const countyData = parse(countyCsv)
     countyData.shift()
 
@@ -53,7 +55,7 @@ function addCountyData (stateInfoByDate) {
 }
 
 function getCountyData () {
-    const countyCsv = fs.readFileSync(`${resourceDir}/us-counties.csv`, "utf8")
+    const countyCsv = fs.readFileSync(countyFilePath, "utf8")
     const countyData = parse(countyCsv)
     // remove headers: date,county,state,fips,cases,deaths
     countyData.shift()
@@ -96,10 +98,6 @@ function allCounties (state) {
     return Object.keys(byCounty)
 }
 
-function errorFn (err) {
-    if (err) console.log(err)
-}
-
 function stateDataCached () {
     const stateData = getStateData()
     addCountyData(stateData)
@@ -110,6 +108,33 @@ function countyDataCached () {
     return getCountyData()
 }
 
+function downloadNYT (callback) {
+    const getFileUpdatedDate = (filePath) => {
+        if (fs.existsSync(filePath)) {
+            const stats = fs.statSync(filePath)
+            return stats.mtime
+        }
+        return 0
+    }
+    const refreshDelta = 24 * 60 * 60 * 1000
+    const currentTime = Date.now()
+    const stateUpdateTime = getFileUpdatedDate(stateFilePath)
+    const countyUpdateTime = getFileUpdatedDate(countyFilePath)
+    const olderTime = Math.min(stateUpdateTime, countyUpdateTime)
+
+    if (currentTime - olderTime < refreshDelta) {
+        console.log("Skip download")
+        callback()
+    }
+
+    download("nytimes/covid-19-data", resourceDir, err => {
+        if (err) {
+            console.log(err)
+        }
+        callback()
+    })
+}
+
 module.exports = {
     // Dictionary with all state date
     stateDataCached: stateDataCached,
@@ -118,25 +143,29 @@ module.exports = {
     countyDataCached: countyDataCached,
 
     // Get latest state date
-    stateData: function () {
-        download("nytimes/covid-19-data", resourceDir, errorFn)
-        return stateDataCached()
+    stateData: function (callback) {
+        downloadNYT(() => {
+            callback(stateDataCached())
+        })
     },
 
     // Get latest county data
-    countyData: function () {
-        download("nytimes/covid-19-data", resourceDir, errorFn)
-        return countyDataCached()
+    countyData: function (callback) {
+        downloadNYT(() => {
+            callback(countyDataCached())
+        })
     },
 
     // list of state in dataset
-    allStates: function () {
-        download("nytimes/covid-19-data", resourceDir, errorFn)
-        return allStates()
+    allStates: function (callback) {
+        downloadNYT(() => {
+            callback(allStates())
+        })
     },
 
-    allCounties: function (state) {
-        download("nytimes/covid-19-data", resourceDir, errorFn)
-        return allCounties(state)
+    allCounties: function (state, callback) {
+        downloadNYT(() => {
+            callback(allCounties(state))
+        })
     }
 }

@@ -2,45 +2,47 @@ var assert = require("assert")
 const _ = require("lodash")
 
 describe("lib", function () {
+    this.timeout(60000)
     var lib = require("../index.js")
     const date = "2020-03-14"
     const state = "Massachusetts"
     const county = "Middlesex"
     describe("#stateData()", function () {
-        const stateDict = lib.stateData()
-        it("should have state cases", function () {
-            assert(stateDict[date][state].cases > 0)
-        })
-
-        it("should have county cases", function () {
-            assert(stateDict[date][state][county].cases > 0)
+        it("should have state and county cases", function (done) {
+            lib.stateData(stateDict => {
+                assert(stateDict[date][state].cases > 0)
+                assert(stateDict[date][state][county].cases > 0)
+                done()
+            })
         })
     })
 
     describe("#countyData()", function () {
-        const countyDict = lib.countyData()
-        it("should have county cases", function () {
-            assert(countyDict[date][county].cases > 0)
+        it("should have county cases", function (done) {
+            lib.countyData(countyDict => {
+                assert(countyDict[date][county].cases > 0)
+                done()
+            })
         })
     })
 
     describe("#allStates()", function () {
-        const states = lib.allStates()
-        it("should have Massachusetts", function () {
-            assert(_.find(states, s => s === state))
-        })
-        it("should have at least 50 (with territories)", function () {
-            assert(states.length >= 50)
+        it("should have specific & enough states", function (done) {
+            lib.allStates(states => {
+                assert(_.find(states, s => s === state))
+                assert(states.length >= 50)
+                done()
+            })
         })
     })
 
     describe("#allCounties(state)", function () {
-        const counties = lib.allCounties(state)
-        it("should have Middlesex", function () {
-            assert(_.find(counties, c => c === county))
-        })
-        it("should have at least 5", function () {
-            assert(counties.length >= 5)
+        it("should have Middlesex and at least 5 counties", function (done) {
+            lib.allCounties(state, counties => {
+                assert(_.find(counties, c => c === county))
+                assert(counties.length >= 5)
+                done()
+            })
         })
     })
 })
