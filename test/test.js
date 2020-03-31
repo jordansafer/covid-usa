@@ -36,11 +36,22 @@ describe("lib", function () {
         })
     })
 
+    describe("#countiesByState()", function () {
+        it("MA should have Middlesex and at least 5 counties", function (done) {
+            lib.countiesByState(countiesByState => {
+                const counties = countiesByState[state]
+                assert(_.find(counties, c => c === county))
+                assert(counties.length >= 10)
+                done()
+            })
+        })
+    })
+
     describe("#allCounties(state)", function () {
         it("should have Middlesex and at least 5 counties", function (done) {
             lib.allCounties(state, counties => {
                 assert(_.find(counties, c => c === county))
-                assert(counties.length >= 5)
+                assert(counties.length >= 10)
                 done()
             })
         })

@@ -86,6 +86,19 @@ function allStates () {
     return Object.keys(byState)
 }
 
+function countiesByState () {
+    const countyCsv = fs.readFileSync(`${resourceDir}/us-counties.csv`, "utf8")
+    const countyData = parse(countyCsv)
+    // remove headers: date,county,state,fips,cases,deaths
+    countyData.shift()
+
+    const byState = _.groupBy(countyData, row => row[2])
+    return _.mapValues(byState, stateData => {
+        const byCounty = _.groupBy(stateData, row => row[1])
+        return Object.keys(byCounty)
+    })
+}
+
 function allCounties (state) {
     const countyCsv = fs.readFileSync(`${resourceDir}/us-counties.csv`, "utf8")
     const countyData = parse(countyCsv)
@@ -123,7 +136,6 @@ function downloadNYT (callback) {
     const olderTime = Math.min(stateUpdateTime, countyUpdateTime)
 
     if (currentTime - olderTime < refreshDelta) {
-        console.log("Skip download")
         callback()
         return
     }
@@ -161,6 +173,12 @@ module.exports = {
     allStates: function (callback) {
         downloadNYT(() => {
             callback(allStates())
+        })
+    },
+
+    countiesByState: function (callback) {
+        downloadNYT(() => {
+            callback(countiesByState())
         })
     },
 

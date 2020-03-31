@@ -14,7 +14,7 @@ or
 
 ```
 "dependencies": {
-    "covid-usa": "2.0.0"
+    "covid-usa": "2.1.0"
 }
 ```
 ### Access the data
@@ -32,6 +32,11 @@ covidData.stateData(stateDate => {
 // list of all states in dataset
 covidData.allStates(states => {
     ...
+});
+
+// map of each state to list of counties in dataset
+covidData.countiesByState(countiesByState => {
+    console.log(countiesByState["California"])
 });
 
 // list of all counties in a state in the dataset
