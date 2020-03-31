@@ -125,6 +125,7 @@ function downloadNYT (callback) {
     if (currentTime - olderTime < refreshDelta) {
         console.log("Skip download")
         callback()
+        return
     }
 
     download("nytimes/covid-19-data", resourceDir, err => {

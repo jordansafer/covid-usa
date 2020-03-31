@@ -14,7 +14,7 @@ or
 
 ```
 "dependencies": {
-    "covid-usa": "1.3.0"
+    "covid-usa": "2.0.0"
 }
 ```
 ### Access the data
@@ -22,21 +22,27 @@ or
 var covidData = require("covid-usa");
 
 // latest state level by date
-var stateData = covidData.stateData();
-console.log(stateData["2020-03-20"]["California"].cases);
-console.log(stateData["2020-03-20"]["California"].deaths);
-console.log(stateData["2020-03-20"]["California"].fid);
-console.log(stateData["2020-03-20"]["Massachusetts"]["Middlesex"].cases);
+covidData.stateData(stateDate => {
+    console.log(stateData["2020-03-20"]["California"].cases);
+    console.log(stateData["2020-03-20"]["California"].deaths);
+    console.log(stateData["2020-03-20"]["California"].fid);
+    console.log(stateData["2020-03-20"]["Massachusetts"]["Middlesex"].cases);
+});
 
 // list of all states in dataset
-var states = covidData.allStates()
+covidData.allStates(states => {
+    ...
+});
 
 // list of all counties in a state in the dataset
-var counties = covidData.allCounties("California")
+covidData.allCounties("California", counties => {
+    ...
+});
 
 // county level data by date
-var countyData = covidData.countyData();
-console.log(countyData["2020-03-10"]["Middlesex"].cases);
+covidData.countyData(countyData => {
+    console.log(countyData["2020-03-10"]["Middlesex"].cases);
+});
 
 // cached APIs to avoid redownloading latest data from NYT
 var cachedStateData = covidData.stateDataCached();

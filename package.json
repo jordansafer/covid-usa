@@ -1,6 +1,6 @@
 {
   "name": "covid-usa",
-  "version": "1.3.0",
+  "version": "2.0.1",
   "description": "Latest data from the New York Times COVID-19 dataset",
   "main": "index.js",
   "repository": {
