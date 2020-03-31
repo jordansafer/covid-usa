@@ -1,4 +1,4 @@
-![Node.js CI](https://github.com/jordansafer/covid-usa/workflows/Node.js%20CI/badge.svg)
+![Build](https://github.com/jordansafer/covid-usa/workflows/Build/badge.svg)
 [![NPM version](http://img.shields.io/npm/v/covid-usa.svg)](https://www.npmjs.com/package/covid-usa)
 [![NPM Downloads](https://img.shields.io/npm/dt/covid-usa.svg)](https://www.npmjs.com/covid-usa)
 # covid-usa 
