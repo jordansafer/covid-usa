@@ -129,13 +129,12 @@ function downloadNYT (callback) {
         }
         return 0
     }
-    const refreshDelta = 24 * 60 * 60 * 1000
+    const refreshDelta = 5 * 60 * 1000 // 5 minutes
     const currentTime = Date.now()
-    const stateUpdateTime = getFileUpdatedDate(stateFilePath)
-    const countyUpdateTime = getFileUpdatedDate(countyFilePath)
-    const olderTime = Math.min(stateUpdateTime, countyUpdateTime)
+    const haveAllFiles = fs.existsSync(stateFilePath) && fs.existsSync(countyFilePath)
+    const updateTime = getFileUpdatedDate(resourceDir)
 
-    if (currentTime - olderTime < refreshDelta) {
+    if (haveAllFiles && currentTime - updateTime < refreshDelta) {
         callback()
         return
     }
